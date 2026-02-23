@@ -5,30 +5,44 @@ export type Contact = {
   name: string;
   phone: string;
   email?: string;
+  edited: boolean;
 };
 
-export type ContactCreate = Omit<Contact, "id">;
+export type ContactCreateInput = Omit<Contact, "id" | "edited">;
 
-export type ContactUpdate = Partial<ContactCreate> & { id: number };
+export type ContactUpdateInput = {
+  id: number;
+} & Partial<Omit<Contact, "id" | "edited">>;
+
+type ContactsFilter = "all" | "edited" | "notEdited";
 
 export const contactsApi = createApi({
   reducerPath: "contactsApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:4000/" }),
   tagTypes: ["Contacts"],
   endpoints: (builder) => ({
-    getContacts: builder.query<Contact[], void>({
-      query: () => "contacts",
+    getContacts: builder.query<Contact[], ContactsFilter>({
+      query: (filter) => {
+        if (filter === "edited") return "contacts?edited=true";
+        if (filter === "notEdited") return "contacts?edited=false";
+        return "contacts";
+      },
       providesTags: ["Contacts"],
     }),
-    createContact: builder.mutation<Contact, ContactCreate>({
-      query: (body) => ({ url: "contacts", method: "POST", body }),
+    createContact: builder.mutation<Contact, ContactCreateInput>({
+      query: (body) => ({
+        url: "contacts",
+        method: "POST",
+        body: { ...body, edited: false },
+      }),
       invalidatesTags: ["Contacts"],
     }),
-    updateContact: builder.mutation<Contact, ContactUpdate>({
+
+    updateContact: builder.mutation<Contact, ContactUpdateInput>({
       query: ({ id, ...patch }) => ({
         url: `contacts/${id}`,
         method: "PATCH",
-        body: patch,
+        body: { ...patch, edited: true },
       }),
       invalidatesTags: ["Contacts"],
     }),

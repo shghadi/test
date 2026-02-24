@@ -49,9 +49,8 @@ export default function ContactFormModal({
       cancelText="لغو"
       confirmLoading={loading}
       title={initial ? "ویرایش" : "افزودن"}
-      okButtonProps={{ htmlType: "submit", form: "contact-form" }} // ✅ دکمه OK فرم را submit می‌کند
+      okButtonProps={{ htmlType: "submit", form: "contact-form" }}
     >
-      {/* ✅ فرم واقعی با id */}
       <form id="contact-form" onSubmit={handleSubmit(onSubmit)}>
         <Form layout="vertical">
           <Form.Item

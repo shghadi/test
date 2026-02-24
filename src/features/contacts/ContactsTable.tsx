@@ -22,15 +22,12 @@ export default function ContactsTable() {
     "all" | "edited" | "notEdited"
   >("all");
 
-  // ✅ اول دیتا را بگیر (بک‌اند فیلتر می‌کند)
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetContactsQuery(editedFilter, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isLoading, isFetching, isError } = useGetContactsQuery(
+    editedFilter,
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Contact | null>(null);
@@ -149,7 +146,6 @@ export default function ContactsTable() {
       <Table<Contact>
         rowKey="id"
         loading={isLoading || isFetching}
-        // ✅ دیتا مستقیم از بک‌اند می‌آید
         dataSource={data ?? []}
         columns={columns}
         pagination={{ pageSize: 5 }}
